@@ -1,21 +1,19 @@
 package com.atlassian.plugins.tutorial;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlElement;
-
 import com.atlassian.jira.project.Project;
-
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
 
 /**
- * JAXB representation of a project's information. This can be marshalled as
- * either JSON or XML, depending on what the client asks for.
+ * JAXB representation of a project's information. This can be marshalled as either JSON or XML,
+ * depending on what the client asks for.
  */
 @Immutable
 @SuppressWarnings("UnusedDeclaration")
 @XmlRootElement
-public class ProjectRepresentation
-{
+public class ProjectRepresentation {
+
     @XmlElement
     private Long id;
 
@@ -30,14 +28,13 @@ public class ProjectRepresentation
 
     @XmlElement
     private String projectLead;
-    
+
     @XmlElement
     private String description;
 
     // This private constructor isn't used by any code, but JAXB requires any
     // representation class to have a no-args constructor.
-    private ProjectRepresentation()
-    {
+    private ProjectRepresentation() {
         id = null;
         key = null;
         name = null;
@@ -47,12 +44,11 @@ public class ProjectRepresentation
     }
 
     /**
-     * Initializes the representation's values to those in the specified
-     * {@code Project}.
+     * Initializes the representation's values to those in the specified {@code Project}.
+     *
      * @param project the project to use for initialization
      */
-    public ProjectRepresentation(Project project)
-    {
+    public ProjectRepresentation(Project project) {
         this.id = project.getId();
         this.key = project.getKey();
         this.name = project.getName();

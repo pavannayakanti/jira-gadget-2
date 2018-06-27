@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins.tutorial</groupId>
@@ -10,7 +10,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>jira-gadget-tutorial-plugin</name>
-    <description>This is the com.atlassian.plugins.tutorial:jira-gadget-tutorial-plugin plugin for Atlassian JIRA.</description>
+    <description>This is the com.atlassian.plugins.tutorial:jira-gadget-tutorial-plugin plugin for
+        Atlassian JIRA.
+    </description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -46,27 +48,36 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-api</artifactId>
-            <version>2.1.beta4</version>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-annotation</artifactId>
+            <version>${atlassian.spring.scanner.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-runtime</artifactId>
+            <version>${atlassian.spring.scanner.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.6</version>
+            <version>4.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.8.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-func-tests</artifactId>
-            <version>${jira.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -81,25 +92,84 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jira-plugin</artifactId>
-                <version>3.0</version>
+                <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>${jira.version}</productVersion>
-                    <testResourcesVersion>${jira.version}</testResourcesVersion>
+                    <productDataVersion>${jira.version}</productDataVersion>
+                    <!-- Uncomment to install TestKit backdoor in JIRA. -->
+                    <!--
+                    <pluginArtifacts>
+                        <pluginArtifact>
+                            <groupId>com.atlassian.jira.tests</groupId>
+                            <artifactId>jira-testkit-plugin</artifactId>
+                            <version>${testkit.version}</version>
+                        </pluginArtifact>
+                    </pluginArtifacts>
+                    -->
+                    <enableQuickReload>true</enableQuickReload>
+                    <enableFastdev>false</enableFastdev>
+
+                    <!-- See here for an explanation of default instructions: -->
+                    <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
+                    <instructions>
+                        <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
+
+                        <!-- Add package to export here -->
+                        <Export-Package>
+                            com.example.plugins.tutorial.api,
+                        </Export-Package>
+
+                        <!-- Add package import here -->
+                        <Import-Package>
+                            org.springframework.osgi.*;resolution:="optional",
+                            org.eclipse.gemini.blueprint.*;resolution:="optional",
+                            *
+                        </Import-Package>
+
+                        <!-- Ensure plugin is spring powered -->
+                        <Spring-Context>*</Spring-Context>
+                    </instructions>
                 </configuration>
             </plugin>
+
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>com.atlassian.plugin</groupId>
+                <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+                <version>${atlassian.spring.scanner.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>atlassian-spring-scanner</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <scannedDependencies>
+                        <dependency>
+                            <groupId>com.atlassian.plugin</groupId>
+                            <artifactId>atlassian-spring-scanner-external-jar</artifactId>
+                        </dependency>
+                    </scannedDependencies>
+                    <verbose>false</verbose>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <properties>
-        <jira.version>5.0-beta3</jira.version>
+        <jira.version>7.10.0</jira.version>
+        <amps.version>6.3.15</amps.version>
+        <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
+        <atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>
+        <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
+        <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
+        <!-- TestKit version 6.x for JIRA 6.x -->
+        <testkit.version>6.3.11</testkit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
 </project>
