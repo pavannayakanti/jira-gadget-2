@@ -1,4 +1,4 @@
-<atlassian-plugin key="jira-gadget-tutorial-plugin"
+<atlassian-plugin key="${atlassian.plugin.key}"
                   name="JIRA Gadget Tutorial Plugin"
                   pluginsVersion="2">
     <!-- Contains plugin metadata. -->
@@ -6,7 +6,6 @@
         <description>A sample plugin showing how to add a gadget to JIRA.</description>
         <vendor name="Atlassian" url="http://www.atlassian.com"/>
         <version>1.0</version>
-        <application-version min="4.0"/>
     </plugin-info>
 
     <!--
@@ -29,9 +28,4 @@
         <description>Provides the REST resource for the project list.</description>
     </rest>
 
-    <!--
-        Imports the SAL UserManager class from JIRA so it can be used by
-        ProjectsResource.
-     -->
-    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
 </atlassian-plugin>
